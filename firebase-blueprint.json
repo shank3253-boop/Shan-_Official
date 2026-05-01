@@ -1,0 +1,113 @@
+import { FirebaseBlueprintConfig } from "./integration[firebase]"; // Metadata doesn't really exist as a type but following the prompt's implied schema
+
+const blueprint: any = {
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user preparation data and profile info.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "stats": {
+          "type": "object",
+          "properties": {
+            "totalTests": { "type": "integer" },
+            "averageAccuracy": { "type": "number" },
+            "streak": { "type": "integer" }
+          }
+        }
+      },
+      "required": ["uid", "email"]
+    },
+    "MCQ": {
+      "title": "Multiple Choice Question",
+      "description": "Represents a single exam question.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "question": { "type": "string" },
+        "options": { "type": "array", "items": { "type": "string" } },
+        "answer": { "type": "string" },
+        "explanation": { "type": "string" },
+        "subject": { "type": "string" },
+        "topic": { "type": "string" },
+        "subtopic": { "type": "string" },
+        "difficulty": { "type": "string", "enum": ["easy", "medium", "hard", "very hard"] },
+        "examType": { "type": "string", "enum": ["CSS", "PPSC", "FPSC", "General"] },
+        "questionType": { "type": "string", "enum": ["Conceptual", "Scenario", "Statement", "Match", "Assertion-Reason"] }
+      }
+    },
+    "TestResult": {
+      "title": "Exam Result",
+      "description": "Stores history of a completed test/practice session.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "score": { "type": "number" },
+        "accuracy": { "type": "number" },
+        "timeSpent": { "type": "integer" },
+        "totalQuestions": { "type": "integer" },
+        "correctCount": { "type": "integer" },
+        "subject": { "type": "string" },
+        "topicAnalytics": { "type": "object" }
+      }
+    },
+    "HotTopic": {
+      "title": "Hot Topic",
+      "description": "Trending CSS topics.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "topic": { "type": "string" },
+        "trend": { "type": "string" },
+        "analysis": { "type": "string" },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      }
+    },
+    "SubjectiveQuestion": {
+      "title": "Subjective Question",
+      "description": "Mock subjective question for vault.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "question": { "type": "string" },
+        "caseStudy": { "type": "string" },
+        "globalAnalysis": { "type": "string" },
+        "pakistanAnalysis": { "type": "string" },
+        "subject": { "type": "string" },
+        "difficulty": { "type": "string" },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and global stats."
+    },
+    "/users/{userId}/results/{resultId}": {
+      "schema": "TestResult",
+      "description": "Individual test results per user."
+    },
+    "/mcqs/{mcqId}": {
+      "schema": "MCQ",
+      "description": "Global bank of MCQs (system-populated or user-shared if enabled)."
+    },
+    "/intelligence_hot_topics/{topicId}": {
+      "schema": "HotTopic",
+      "description": "Latest trending topics for CSS."
+    },
+    "/intelligence_subjective_vault/{qId}": {
+      "schema": "SubjectiveQuestion",
+      "description": "AI-generated subjective question vault."
+    }
+  }
+};
+
+export default blueprint;
